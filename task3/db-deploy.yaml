@@ -1,12 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: db-deploy
   labels:
     app: db
   name: db
   namespace: vote
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: db
