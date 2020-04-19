@@ -9,5 +9,6 @@ spec:
   containers:
   - name: redis
     image: redis:latest
-    ports:
+    ports: 80 
     - containerPort: 6379
+      name: redis
