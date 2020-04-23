@@ -14,3 +14,21 @@ spec:
   selector:
     name: vote-pod
     app: demo-voting-app
+
+
+    ---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: votingapp-pod
+  labels:
+    name: vote-pod
+    app: demo-voting-app 
+spec:
+  containers:
+  - name: redis
+    image: mshaibek/voting-app_vote:1.0
+    ports: 80 
+    - containerPort: 6379
+      name: vote
