@@ -15,7 +15,8 @@ spec:
     name: vote-pod
     app: demo-voting-app
 
----
+
+    ---
 
 apiVersion: v1
 kind: Pod
