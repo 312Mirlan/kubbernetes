@@ -1,0 +1,153 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgrespod
+  labels:
+    name: postgrespod
+    app: demo-voting-app
+spec:
+  containers:
+  - name: postgres
+    image: postgres:9.4
+    ports:
+     - containerPort: 5432
+    env:
+    - name: POSTGRES_USER
+      value: postgres
+    - name: POSTGRES_PASSWORD
+      value: postgres
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  labels:
+    name: db-service
+    app: demo-voting-app
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+     name: postgrespod
+     app: demo-voting-app
+
+
+# REDIS
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myredispod
+  labels:
+    name: myredispod
+    app: demo-voting-app
+spec:
+  containers:
+  - name: redis
+    image: redis:latest
+    ports:
+     - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    name: redis-service
+    app: demo-voting-app
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6379
+    name: redis
+    targetPort: 6379
+  selector:
+     name: myredispod
+     app: demo-voting-app
+
+
+
+# Result
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: result-pod
+  labels:
+    name: result-pod
+    app: demo-voting-app
+spec:
+  containers:
+  - name: res-app
+    image: mshaibek/voting-app_result:1.0
+    ports:
+     - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: result-service
+  labels:
+    name: result-service
+    app: demo-voting-app
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30001
+  selector:
+     name: result-pod
+     app: demo-voting-ap
+
+# Voting
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: votingapppod
+  labels:
+    name: votingapppod
+    app: demo-voting-app
+spec:
+  containers:
+  - name: voting-app
+    image: mshaibek/voting-app_vote:1.0
+    ports:
+      - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: voting-service
+  labels:
+    name: voting-service
+    app: demo-voting-app
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30000
+  selector:
+     name: votingapppod
+     app: demo-voting-app
+
+# Worker
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: worker-app-pod
+  labels:
+    name: worker-app-pod
+    app: demo-voting-app
+spec:
+  containers:
+  - name: worker-app
+    image: mshaibek/voting-app_worker:1.0
